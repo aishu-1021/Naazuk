@@ -630,7 +630,7 @@ const Toggle = ({ label, active = false }: any) => (
   </div>
 );
 
-const HallOfShameScreen = () => (
+const HallOfShameScreen = ({ data }: { data: any }) => (
   <div className="p-8 md:p-12 max-w-7xl mx-auto space-y-16">
     <section className="flex flex-col items-start gap-6 max-w-3xl">
       <h2 className="font-headline text-6xl md:text-8xl font-black italic uppercase tracking-tighter leading-tight">
@@ -660,25 +660,28 @@ const HallOfShameScreen = () => (
               <span className="font-label text-xs uppercase font-bold">Ego Level: God</span>
             </div>
             <div>
-              <h3 className="font-headline text-4xl font-black uppercase mb-2">The LinkedIn Larpist</h3>
+              <h3 className="font-headline text-4xl font-black uppercase mb-2">{data ? data.egoType : "No Case Yet"}</h3>
               <p className="font-label text-sm opacity-70">Case ID: #HOS-2024-089 • 2h ago</p>
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             <div className="md:col-span-2 space-y-6">
               <p className="font-body text-xl font-medium leading-relaxed">
-                "Posted a 10-paragraph essay about how their morning coffee taught them 'agile synergy' and 'resilient disruption' because the barista didn't say 'Have a nice day' fast enough."
+                {data ? data.medicalAutopsy : "Run a case first"}"
               </p>
               <div className="bg-black/5 p-6 rounded-lg border-l-8 border-black italic font-body">
                 <span className="font-label block not-italic font-black text-xs uppercase mb-2">Top Roast:</span>
-                "Bro is out here turning a mild social inconvenience into a TED Talk for bots. Seek grass immediately."
+                "{data ? data.topRoast : "No roast yet"}"
               </div>
             </div>
             <div className="flex flex-col items-center justify-center bg-black text-white p-6 rounded-lg rotate-2">
               <span className="font-label uppercase text-xs mb-1">Pettiness Score</span>
-              <span className="font-headline text-6xl font-black text-primary">9.8</span>
+              <span className="font-headline text-6xl font-black text-primary">{data ? (data.pettinessScore / 10).toFixed(1) : "0.0"}</span>
               <div className="w-full h-2 bg-white/10 mt-4 rounded-full overflow-hidden">
-                <div className="h-full bg-primary w-[98%]"></div>
+                <div
+                  className="h-full bg-primary"
+                  style={{ width: `${data ? data.pettinessScore : 0}%` }}
+                ></div>
               </div>
             </div>
           </div>
@@ -857,7 +860,7 @@ The allScores are independent probability scores (NOT summing to 100). The prima
       const clean = text.replace(/```json|```/g, '').trim();
       const data = JSON.parse(clean);
       setAnalysisResult(data);
-      setScreen('evidence');
+      setScreen('hall-of-shame');
     } catch (err) {
       console.error('Groq error:', err);
       alert('Something went wrong: ' + (err as Error).message);
@@ -918,7 +921,7 @@ The allScores are independent probability scores (NOT summing to 100). The prima
             {screen === 'autopsy' && <AutopsyScreen onDissect={handleDissect} isAnalyzing={isAnalyzing} result={analysisResult} />}
             {screen === 'evidence' && <EvidenceScreen data={analysisResult} />}
             {screen === 'case-master' && <CaseMasterScreen data={analysisResult} />}
-            {screen === 'hall-of-shame' && <HallOfShameScreen />}
+            {screen === 'hall-of-shame' && <HallOfShameScreen data={analysisResult} />}
           </motion.div>
         </AnimatePresence>
 
