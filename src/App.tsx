@@ -536,7 +536,7 @@ const HallOfShameScreen = ({ data }: { data: any }) => (
     </section>
 
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-      <div className="lg:col-span-8 space-y-12">
+      <div className="lg:col-span-12 space-y-12 max-w-4xl mx-auto">
         <article className="relative bg-primary text-black p-8 md:p-12 rounded-lg border-4 border-black sticker-shadow overflow-hidden">
           <div className="absolute -right-8 -top-8 bg-error text-white font-headline font-black py-4 px-12 rotate-12 uppercase tracking-widest text-xl shadow-lg border-4 border-black">⭐ HALL OF FAME</div>
           <div className="flex items-start gap-6 mb-8">
@@ -572,30 +572,7 @@ const HallOfShameScreen = ({ data }: { data: any }) => (
             <ReactionButton emoji="🏆" label="Elite Shame" count={34} />
           </div>
         </article>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <SmallCaseCard color="bg-tertiary" icon={<Award />} title="The 'Reply All' Vigilante" desc="Replied to a company-wide email chain (500+ people) just to correct a tiny typo in the CEO's greeting." score="7.4" reactions={["🥚 12", "👶 4"]} />
-          <SmallCaseCard color="bg-secondary" icon={<Flame />} title="The Passive Aggressive Post-It" desc="Labeled every single item in the shared fridge with a timestamped 'Expected Freshness Window'." score="8.9" reactions={["🪞 45", "🥚 31"]} />
-        </div>
       </div>
-
-      <aside className="lg:col-span-4 space-y-8">
-        <div className="bg-surface-high p-6 rounded-lg border-l-4 border-primary sticker-shadow">
-          <h5 className="font-headline text-xl font-black uppercase mb-6 flex items-center gap-2"><TrendingUp className="text-primary" /> Most Fragile This Week</h5>
-          <div className="space-y-4">
-            <LeaderboardItem rank="01" name="@SynergySam" votes="892" />
-            <LeaderboardItem rank="02" name="@LinkedInLord" votes="754" />
-            <LeaderboardItem rank="03" name="@CryptoKingPin" votes="412" />
-          </div>
-        </div>
-        <div className="bg-surface-high p-6 rounded-lg border-l-4 border-secondary sticker-shadow">
-          <h5 className="font-headline text-xl font-black uppercase mb-6 flex items-center gap-2"><Bell className="text-secondary" /> High Pettiness Scores</h5>
-          <div className="space-y-4">
-            <ScoreItem label="Airfryer Gate" score="9.9" />
-            <ScoreItem label="The Font Correcter" score="9.6" />
-          </div>
-        </div>
-      </aside>
     </div>
 
     <footer className="mt-24 bg-background border-t-8 border-secondary p-12 md:p-24 flex flex-col items-center text-center gap-8 rounded-t-xl sticker-shadow">
