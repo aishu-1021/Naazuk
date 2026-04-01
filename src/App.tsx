@@ -2,7 +2,7 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
-
+import * as htmlToImage from 'html-to-image';
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Search,
@@ -178,7 +178,6 @@ const AutopsyScreen = ({ onDissect, isAnalyzing, result }: { onDissect: (inciden
 
   return (
     <div className="space-y-24 pb-24">
-      {/* Hero */}
       <section className="px-6 py-20 flex flex-col items-center text-center">
         <motion.h1
           initial={{ scale: 0.8, opacity: 0 }}
@@ -197,7 +196,6 @@ const AutopsyScreen = ({ onDissect, isAnalyzing, result }: { onDissect: (inciden
         />
       </section>
 
-      {/* Input */}
       <section className="px-6 flex justify-center">
         <div className="w-full max-w-3xl bg-surface-high border-4 border-primary rounded-lg p-8 sticker-shadow-yellow transition-all">
           <div className="flex items-center gap-2 mb-6">
@@ -227,7 +225,6 @@ const AutopsyScreen = ({ onDissect, isAnalyzing, result }: { onDissect: (inciden
         </div>
       </section>
 
-      {/* Ego Meter */}
       <section className="px-6 py-20 bg-background/50">
         <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div className="space-y-8">
@@ -262,7 +259,6 @@ const AutopsyScreen = ({ onDissect, isAnalyzing, result }: { onDissect: (inciden
         </div>
       </section>
 
-      {/* Reports — only show if we have real results */}
       {result && (
         <section className="px-6 py-24 max-w-[1400px] mx-auto">
           <div className="mb-16 flex flex-col items-center">
@@ -270,47 +266,12 @@ const AutopsyScreen = ({ onDissect, isAnalyzing, result }: { onDissect: (inciden
             <div className="h-2 w-48 bg-primary"></div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-start">
-            <ReportCard
-              icon={<Microscope size={32} />}
-              title="🔬 MEDICAL AUTOPSY"
-              content={result.medicalAutopsy}
-              color="bg-tertiary"
-              tilt="tilt-1"
-            />
-            <ReportCard
-              icon={<Globe size={32} />}
-              title="🌐 EGO TRANSLATOR"
-              content={result.egoTranslator}
-              color="bg-primary"
-              textColor="text-black"
-              tilt="tilt-2"
-            />
-            <ReportCard
-              icon={<Plane size={32} />}
-              title="🛂 RED FLAG IMMIGRATION"
-              content={result.redFlagImmigration}
-              color="bg-secondary"
-              tilt="tilt-3"
-            />
-            <ReportCard
-              icon={<Coffee size={32} />}
-              title="🍵 SMILE & STAB"
-              content={result.smileAndStab}
-              color="bg-tertiary"
-              tilt="tilt-2"
-            />
-            <ReportCard
-              icon={<Film size={32} />}
-              title="🎬 VILLAIN ARC"
-              content={result.villainArc}
-              color="bg-primary"
-              textColor="text-black"
-              tilt="tilt-1"
-              className="lg:col-span-2"
-            />
+            <ReportCard icon={<Microscope size={32} />} title="🔬 MEDICAL AUTOPSY" content={result.medicalAutopsy} color="bg-tertiary" tilt="tilt-1" />
+            <ReportCard icon={<Globe size={32} />} title="🌐 EGO TRANSLATOR" content={result.egoTranslator} color="bg-primary" textColor="text-black" tilt="tilt-2" />
+            <ReportCard icon={<Plane size={32} />} title="🛂 RED FLAG IMMIGRATION" content={result.redFlagImmigration} color="bg-secondary" tilt="tilt-3" />
+            <ReportCard icon={<Coffee size={32} />} title="🍵 SMILE & STAB" content={result.smileAndStab} color="bg-tertiary" tilt="tilt-2" />
+            <ReportCard icon={<Film size={32} />} title="🎬 VILLAIN ARC" content={result.villainArc} color="bg-primary" textColor="text-black" tilt="tilt-1" className="lg:col-span-2" />
           </div>
-
-          {/* Top Roast */}
           <div className="mt-12 p-8 bg-error border-4 border-black sticker-shadow text-center">
             <p className="font-label text-xs uppercase tracking-widest text-white/70 mb-3">⚡ TOP ROAST OF THE DAY</p>
             <p className="font-bebas text-4xl text-white">{result.topRoast}</p>
@@ -331,8 +292,6 @@ const ReportCard = ({ icon, title, content, color, textColor = "text-white", til
     <p className="font-body text-lg leading-relaxed font-bold">{content}</p>
   </div>
 );
-
-// --- Diagnosis Card with animated bar ---
 
 const DiagnosisCard = ({ emoji, title, desc, prob, active = false, delay = 0 }: any) => {
   const [barWidth, setBarWidth] = useState(0);
@@ -358,10 +317,8 @@ const DiagnosisCard = ({ emoji, title, desc, prob, active = false, delay = 0 }: 
       )}
       <div className="text-3xl">{emoji}</div>
       <div>
-        <h4 className={`font-headline font-black text-lg uppercase leading-tight ${active ? 'text-primary' : 'text-white'}`}>
-          {title}
-        </h4>
-        <p className="font-body text-white/50 text-xs mt-1 leading-relaxed">{desc}</p>
+        <h4 className={`font-headline font-black text-lg uppercase leading-tight ${active ? 'text-primary' : 'text-white'}`}>{title}</h4>
+        <p className="font-body text-white/50 text-xs mt-1 leading-relaxed line-clamp-2">{desc}</p>
       </div>
       <div className="mt-auto">
         <div className="flex justify-between font-label text-xs mb-2">
@@ -379,8 +336,6 @@ const DiagnosisCard = ({ emoji, title, desc, prob, active = false, delay = 0 }: 
   );
 };
 
-// --- Evidence Screen ---
-
 const EvidenceScreen = ({ data }: { data: any }) => {
   const [confBarWidth, setConfBarWidth] = useState(0);
 
@@ -396,7 +351,6 @@ const EvidenceScreen = ({ data }: { data: any }) => {
     </div>
   );
 
-  // Build ordered diagnosis list: detected type first, rest sorted by score desc
   const allScores: Record<string, number> = data.allScores || {};
 
   const orderedTypes = [...EGO_TYPES].sort((a, b) => {
@@ -407,44 +361,25 @@ const EvidenceScreen = ({ data }: { data: any }) => {
 
   return (
     <div className="space-y-0">
-      {/* Verdict Banner */}
       <section className="w-full bg-primary py-12 px-12 flex justify-between items-center relative overflow-hidden">
-        <div
-          className="absolute inset-0 opacity-10 pointer-events-none"
-          style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, black 1px, transparent 0)', backgroundSize: '24px 24px' }}
-        />
+        <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, black 1px, transparent 0)', backgroundSize: '24px 24px' }} />
         <div className="relative z-10">
-          <h1 className="font-headline font-black text-6xl text-black tracking-tighter leading-none mb-2 uppercase">
-            THE VERDICT IS IN.
-          </h1>
-          <p className="font-body text-black text-xl font-medium max-w-2xl">
-            After careful examination of the incident, the tribunal has reached a conclusion.
-          </p>
+          <h1 className="font-headline font-black text-6xl text-black tracking-tighter leading-none mb-2 uppercase">THE VERDICT IS IN.</h1>
+          <p className="font-body text-black text-xl font-medium max-w-2xl">After careful examination of the incident, the tribunal has reached a conclusion.</p>
         </div>
         <div className="relative z-10">
           <div className="border-4 border-error px-6 py-3 rounded-none rotate-3 bg-black/5 flex flex-col items-center">
-            <span className="font-headline font-black text-error text-4xl tracking-widest leading-none">
-              {data.egoType}
-            </span>
+            <span className="font-headline font-black text-error text-4xl tracking-widest leading-none">{data.egoType}</span>
           </div>
         </div>
       </section>
 
-      {/* Main Evidence Card */}
       <section className="max-w-5xl mx-auto py-24 px-8">
         <div className="bg-surface-high border-4 border-primary p-12 relative flex flex-col items-center text-center shadow-[20px_20px_0px_#000]">
-          <div className="absolute -top-6 -left-6 bg-tertiary text-white font-label font-bold px-4 py-2 rotate-[-5deg] shadow-lg">
-            CASE ID: #882-QX
-          </div>
+          <div className="absolute -top-6 -left-6 bg-tertiary text-white font-label font-bold px-4 py-2 rotate-[-5deg] shadow-lg">CASE ID: #882-QX</div>
           <span className="text-8xl mb-8">{data.egoEmoji}</span>
-          <h2 className="font-headline font-black text-8xl text-primary tracking-tighter mb-4 italic uppercase">
-            {data.egoType}
-          </h2>
-          <p className="font-body text-2xl text-white/70 max-w-3xl leading-relaxed mb-12">
-            {data.medicalAutopsy}
-          </p>
-
-          {/* Animated Confidence Bar */}
+          <h2 className="font-headline font-black text-8xl text-primary tracking-tighter mb-4 italic uppercase">{data.egoType}</h2>
+          <p className="font-body text-2xl text-white/70 max-w-3xl leading-relaxed mb-12">{data.medicalAutopsy}</p>
           <div className="w-full max-w-2xl mb-16">
             <div className="flex justify-between font-label text-primary font-bold mb-4 tracking-widest uppercase">
               <span>The classifier is very sure about this one</span>
@@ -459,18 +394,13 @@ const EvidenceScreen = ({ data }: { data: any }) => {
               </div>
             </div>
           </div>
-
-          {/* Exhibit Cards */}
           <div className="flex flex-wrap justify-center gap-12 w-full">
             {[
               { label: 'Exhibit A', content: data.evidenceA, icon: <Copy size={32} /> },
               { label: 'Exhibit B', content: data.evidenceB, icon: <Award size={32} /> },
               { label: 'Exhibit C', content: data.evidenceC, icon: <Settings size={32} /> },
             ].map((ex) => (
-              <div
-                key={ex.label}
-                className="bg-primary text-black p-6 w-56 h-56 shadow-xl -rotate-2 transform hover:rotate-0 transition-transform flex flex-col justify-between"
-              >
+              <div key={ex.label} className="bg-primary text-black p-6 w-56 h-56 shadow-xl -rotate-2 transform hover:rotate-0 transition-transform flex flex-col justify-between">
                 {ex.icon}
                 <p className="font-body font-bold text-lg leading-tight text-left">{ex.content}</p>
                 <span className="font-label text-[10px] uppercase opacity-60 text-left">{ex.label}</span>
@@ -480,30 +410,15 @@ const EvidenceScreen = ({ data }: { data: any }) => {
         </div>
       </section>
 
-      {/* Full Diagnosis — all 7 types with real dynamic scores */}
       <section className="py-24 px-12 bg-surface">
-        <h3 className="font-headline font-black text-6xl text-white tracking-tighter mb-4 uppercase italic">
-          The Full Diagnosis
-        </h3>
-        <p className="font-body text-white/50 mb-16 text-lg">
-          All ego types scored in real-time against your incident.
-        </p>
+        <h3 className="font-headline font-black text-6xl text-white tracking-tighter mb-4 uppercase italic">The Full Diagnosis</h3>
+        <p className="font-body text-white/50 mb-16 text-lg">All ego types scored in real-time against your incident.</p>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {orderedTypes.map((type, index) => {
             const isDetected = type.key === data.egoType;
-            const score = isDetected
-              ? data.confidence
-              : (allScores[type.key] ?? 0);
+            const score = isDetected ? data.confidence : (allScores[type.key] ?? 0);
             return (
-              <DiagnosisCard
-                key={type.key}
-                emoji={type.emoji}
-                title={type.key}
-                desc={type.desc}
-                prob={score}
-                active={isDetected}
-                delay={index * 150}
-              />
+              <DiagnosisCard key={type.key} emoji={type.emoji} title={type.key} desc={type.desc} prob={score} active={isDetected} delay={index * 150} />
             );
           })}
         </div>
@@ -512,111 +427,118 @@ const EvidenceScreen = ({ data }: { data: any }) => {
   );
 };
 
-const CaseMasterScreen = ({ data }: { data: any }) => (
-  <div className="max-w-6xl mx-auto px-12 py-16">
-    <section className="mb-20">
-      <h2 className="font-headline font-black text-7xl md:text-8xl text-white mb-4 tracking-tighter leading-none uppercase">
-        EXPORT THE <span className="text-secondary">DESTRUCTION.</span>
-      </h2>
-      <p className="font-body text-2xl text-white/60 max-w-2xl leading-relaxed">
-        Your case file is ready. Frame it. Post it. Send it to them anonymously.
-      </p>
-    </section>
+const CaseMasterScreen = ({ data }: { data: any }) => {
+  const cardRef = useRef<HTMLDivElement>(null);
 
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
-      <div className="lg:col-span-5 flex justify-center">
-        <div className="relative group perspective-card">
-          <div className="absolute -top-4 -right-6 bg-primary text-black font-label font-bold px-4 py-2 rotate-[12deg] z-30 shadow-xl">
-            EVIDENCE #8291
-          </div>
-          <div className="w-[380px] aspect-[9/16] bg-[#111] border-[6px] border-secondary p-8 flex flex-col relative overflow-hidden shadow-[15px_15px_0_0_#A90219] rotate-[-2deg]">
-            <div className="flex justify-between items-start mb-12">
-              <div className="font-label text-secondary text-xs tracking-[0.2em]">CASE FILE: #EGO-8291</div>
-              <div className="bg-secondary/20 text-secondary border border-secondary px-2 py-1 text-[10px] font-bold uppercase tracking-tighter">CLASSIFIED</div>
-            </div>
-            <h3 className="font-headline font-black text-5xl text-white leading-[0.85] mb-8 uppercase italic">
-              {data ? data.egoType : 'UNSOLICITED\nTAKEOVER'}
-            </h3>
-            <div className="w-full h-1 bg-secondary/30 mb-10"></div>
-            <div className="space-y-10">
-              <div>
-                <label className="font-label text-[10px] text-white/40 tracking-widest block mb-2 uppercase italic">INCIDENT SUMMARY</label>
-                <p className="font-body text-sm text-white/80 leading-snug">{data ? data.medicalAutopsy : 'Submit an incident to generate your case file.'}</p>
+  const handleDownload = async () => {
+    if (!cardRef.current) return;
+    const dataUrl = await htmlToImage.toPng(cardRef.current);
+    const link = document.createElement('a');
+    link.download = 'naazuk-case.png';
+    link.href = dataUrl;
+    link.click();
+  };
+
+  return (
+    <div className="max-w-6xl mx-auto px-12 py-16">
+      <section className="mb-20">
+        <h2 className="font-headline font-black text-7xl md:text-8xl text-white mb-4 tracking-tighter leading-none uppercase">
+          EXPORT THE <span className="text-secondary">DESTRUCTION.</span>
+        </h2>
+        <p className="font-body text-2xl text-white/60 max-w-2xl leading-relaxed">
+          Your case file is ready. Frame it. Post it. Send it to them anonymously.
+        </p>
+      </section>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+        <div className="lg:col-span-5 flex justify-center">
+          <div className="relative group perspective-card">
+            <div className="absolute -top-4 -right-6 bg-primary text-black font-label font-bold px-4 py-2 rotate-[12deg] z-30 shadow-xl">EVIDENCE #8291</div>
+            <div ref={cardRef} className="w-[380px] aspect-[9/16] bg-[#111] border-[6px] border-secondary p-8 flex flex-col relative overflow-hidden shadow-[15px_15px_0_0_#A90219] rotate-[-2deg]">
+              <div className="flex justify-between items-start mb-12">
+                <div className="font-label text-secondary text-xs tracking-[0.2em]">CASE FILE: #EGO-8291</div>
+                <div className="bg-secondary/20 text-secondary border border-secondary px-2 py-1 text-[10px] font-bold uppercase tracking-tighter">CLASSIFIED</div>
               </div>
-              <div>
-                <label className="font-label text-[10px] text-white/40 tracking-widest block mb-2 uppercase italic">KEY EVIDENCE</label>
-                <p className="font-headline font-bold text-xl text-primary leading-tight">"{data ? data.topRoast : 'The verdict awaits.'}"</p>
-              </div>
-              <div>
-                <div className="flex justify-between items-end mb-2">
-                  <label className="font-label text-[10px] text-white/40 tracking-widest uppercase italic">PETTINESS RATING</label>
-                  <span className="font-headline font-black text-3xl text-secondary leading-none">{data ? data.pettinessScore : 87}%</span>
+              <h3 className="font-headline font-black text-5xl text-white leading-[0.85] mb-8 uppercase italic">
+                {data ? data.egoType : 'UNSOLICITED TAKEOVER'}
+              </h3>
+              <div className="w-full h-1 bg-secondary/30 mb-10"></div>
+              <div className="space-y-10">
+                <div>
+                  <label className="font-label text-[10px] text-white/40 tracking-widest block mb-2 uppercase italic">INCIDENT SUMMARY</label>
+                  <p className="font-body text-sm text-white/80 leading-snug">{data ? data.medicalAutopsy : 'Submit an incident to generate your case file.'}</p>
                 </div>
-                <div className="w-full h-4 bg-white/10 rounded-full overflow-hidden">
-                  <div className="h-full bg-secondary shadow-[0_0_15px_rgba(255,113,107,0.5)]" style={{width: `${data ? data.pettinessScore : 87}%`}}></div>
+                <div>
+                  <label className="font-label text-[10px] text-white/40 tracking-widest block mb-2 uppercase italic">KEY EVIDENCE</label>
+                  <p className="font-headline font-bold text-xl text-primary leading-tight">"{data ? data.topRoast : 'The verdict awaits.'}"</p>
+                </div>
+                <div>
+                  <div className="flex justify-between items-end mb-2">
+                    <label className="font-label text-[10px] text-white/40 tracking-widest uppercase italic">PETTINESS RATING</label>
+                    <span className="font-headline font-black text-3xl text-secondary leading-none">{data ? data.pettinessScore : 87}%</span>
+                  </div>
+                  <div className="w-full h-4 bg-white/10 rounded-full overflow-hidden">
+                    <div className="h-full bg-secondary shadow-[0_0_15px_rgba(255,113,107,0.5)]" style={{ width: `${data ? data.pettinessScore : 87}%` }}></div>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="mt-auto pt-12 flex justify-between items-center opacity-40">
-              <span className="font-headline font-black italic uppercase text-2xl tracking-tighter text-white">Naazuk</span>
-              <span className="font-label text-[8px] text-white/50 text-right uppercase">CERTIFIED EGO AUTOPSY<br/>DISTRICT 9 FORENSICS</span>
+              <div className="mt-auto pt-12 flex justify-between items-center opacity-40">
+                <span className="font-headline font-black italic uppercase text-2xl tracking-tighter text-white">Naazuk</span>
+                <span className="font-label text-[8px] text-white/50 text-right uppercase">CERTIFIED EGO AUTOPSY<br/>DISTRICT 9 FORENSICS</span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="lg:col-span-7 space-y-16">
-        <section className="grid grid-cols-1 gap-4">
-          <ActionButton icon={<Download />} label="DOWNLOAD IMAGE" color="bg-secondary" shadow="shadow-[8px_8px_0_0_#A90219]" />
-          <ActionButton icon={<LinkIcon />} label="COPY LINK" color="border-4 border-primary text-primary" />
-          <ActionButton icon={<Instagram />} label="SHARE TO INSTAGRAM" color="bg-tertiary" shadow="shadow-[8px_8px_0_0_#2e0061]" />
-        </section>
+        <div className="lg:col-span-7 space-y-16">
+          <section className="grid grid-cols-1 gap-4">
+            <ActionButton icon={<Download />} label="DOWNLOAD IMAGE" color="bg-secondary" shadow="shadow-[8px_8px_0_0_#A90219]" onClick={handleDownload} />
+            <ActionButton icon={<LinkIcon />} label="COPY LINK" color="border-4 border-primary text-primary" onClick={() => { navigator.clipboard.writeText(window.location.href); alert("Link copied!"); }} />
+            <ActionButton icon={<Instagram />} label="SHARE TO INSTAGRAM" color="bg-tertiary" shadow="shadow-[8px_8px_0_0_#2e0061]" />
+          </section>
 
-        <section className="bg-surface-high p-10 border-l-8 border-primary">
-          <h4 className="font-headline font-black text-3xl text-white mb-10 uppercase italic">CUSTOMISE YOUR CASE FILE</h4>
-          <div className="space-y-12">
-            <div>
-              <label className="font-label text-sm text-white/50 uppercase tracking-widest block mb-4">BACKGROUND THEME</label>
-              <div className="flex flex-wrap gap-4">
-                <button className="w-16 h-16 bg-[#111] border-4 border-primary ring-4 ring-offset-4 ring-offset-surface ring-primary/20"></button>
-                <button className="w-16 h-16 bg-secondary border-4 border-transparent hover:border-white/50 transition-colors"></button>
-                <button className="w-16 h-16 bg-tertiary border-4 border-transparent hover:border-white/50 transition-colors"></button>
-                <button className="w-16 h-16 bg-primary border-4 border-transparent hover:border-white/50 transition-colors"></button>
+          <section className="bg-surface-high p-10 border-l-8 border-primary">
+            <h4 className="font-headline font-black text-3xl text-white mb-10 uppercase italic">CUSTOMISE YOUR CASE FILE</h4>
+            <div className="space-y-12">
+              <div>
+                <label className="font-label text-sm text-white/50 uppercase tracking-widest block mb-4">BACKGROUND THEME</label>
+                <div className="flex flex-wrap gap-4">
+                  <button className="w-16 h-16 bg-[#111] border-4 border-primary ring-4 ring-offset-4 ring-offset-surface ring-primary/20"></button>
+                  <button className="w-16 h-16 bg-secondary border-4 border-transparent hover:border-white/50 transition-colors"></button>
+                  <button className="w-16 h-16 bg-tertiary border-4 border-transparent hover:border-white/50 transition-colors"></button>
+                  <button className="w-16 h-16 bg-primary border-4 border-transparent hover:border-white/50 transition-colors"></button>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <Toggle label="Pettiness Score" active />
+                <Toggle label="Evidence Quote" active />
+                <Toggle label="Watermark" active />
+                <Toggle label="Case Stamp" />
               </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <Toggle label="Pettiness Score" active />
-              <Toggle label="Evidence Quote" active />
-              <Toggle label="Watermark" active />
-              <Toggle label="Case Stamp" />
-            </div>
-          </div>
-        </section>
+          </section>
+        </div>
       </div>
+
+      <section className="mt-32 bg-primary p-12 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="relative z-10 max-w-xl">
+          <h5 className="font-headline font-black text-4xl text-black leading-none uppercase mb-2">THINK YOUR CASE DESERVES PUBLIC ATTENTION?</h5>
+          <p className="font-body text-black/70 font-medium">Submit it to the Hall of Shame. Let the people vote on their level of delusion.</p>
+        </div>
+        <button className="relative z-10 bg-error text-white px-10 py-5 font-headline font-black text-xl uppercase tracking-tighter hover:scale-105 active:scale-95 transition-transform flex items-center gap-4">
+          SUBMIT TO HALL OF SHAME <TrendingUp />
+        </button>
+      </section>
     </div>
+  );
+};
 
-    <section className="mt-32 bg-primary p-12 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
-      <div className="relative z-10 max-w-xl">
-        <h5 className="font-headline font-black text-4xl text-black leading-none uppercase mb-2">
-          THINK YOUR CASE DESERVES PUBLIC ATTENTION?
-        </h5>
-        <p className="font-body text-black/70 font-medium">
-          Submit it to the Hall of Shame. Let the people vote on their level of delusion.
-        </p>
-      </div>
-      <button className="relative z-10 bg-error text-white px-10 py-5 font-headline font-black text-xl uppercase tracking-tighter hover:scale-105 active:scale-95 transition-transform flex items-center gap-4">
-        SUBMIT TO HALL OF SHAME <TrendingUp />
-      </button>
-    </section>
-  </div>
-);
-
-const ActionButton = ({ icon, label, color, shadow = "" }: any) => (
-  <button className={`group relative flex items-center justify-between px-8 py-6 rounded-none font-headline font-black text-2xl uppercase tracking-tighter transition-all hover:scale-[1.02] active:scale-95 ${color} ${shadow}`}>
-    <span className="flex items-center gap-4">
-      {icon}
-      {label}
-    </span>
+const ActionButton = ({ icon, label, color = "bg-secondary", shadow = "", onClick }: any) => (
+  <button
+    onClick={onClick}
+    className={`group relative flex items-center justify-between px-8 py-6 rounded-none font-headline font-black text-2xl uppercase tracking-tighter transition-all hover:scale-[1.02] active:scale-95 ${color} ${shadow}`}
+  >
+    <span className="flex items-center gap-4">{icon}{label}</span>
     <ArrowRight className="group-hover:translate-x-2 transition-transform" />
   </button>
 );
@@ -636,9 +558,7 @@ const HallOfShameScreen = ({ data }: { data: any }) => (
       <h2 className="font-headline text-6xl md:text-8xl font-black italic uppercase tracking-tighter leading-tight">
         THE HALL OF <span className="text-primary">SHAME</span> 🏛️
       </h2>
-      <p className="font-body text-xl text-white/60 max-w-xl">
-        Real egos. Real incidents. Submitted by real survivors of the digital vanity war.
-      </p>
+      <p className="font-body text-xl text-white/60 max-w-xl">Real egos. Real incidents. Submitted by real survivors of the digital vanity war.</p>
       <div className="flex flex-wrap gap-3">
         <span className="bg-surface-high px-6 py-2 rounded-full text-primary font-label text-sm border border-white/10">342 Cases Filed</span>
         <span className="bg-surface-high px-6 py-2 rounded-full text-secondary font-label text-sm border border-white/10">1.2K Reactions</span>
@@ -649,14 +569,10 @@ const HallOfShameScreen = ({ data }: { data: any }) => (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
       <div className="lg:col-span-8 space-y-12">
         <article className="relative bg-primary text-black p-8 md:p-12 rounded-lg border-4 border-black sticker-shadow overflow-hidden">
-          <div className="absolute -right-8 -top-8 bg-error text-white font-headline font-black py-4 px-12 rotate-12 uppercase tracking-widest text-xl shadow-lg border-4 border-black">
-            ⭐ HALL OF FAME
-          </div>
+          <div className="absolute -right-8 -top-8 bg-error text-white font-headline font-black py-4 px-12 rotate-12 uppercase tracking-widest text-xl shadow-lg border-4 border-black">⭐ HALL OF FAME</div>
           <div className="flex items-start gap-6 mb-8">
             <div className="flex flex-col items-center">
-              <div className="w-20 h-20 bg-black text-primary flex items-center justify-center rounded-lg rotate-[-3deg] mb-2 border-2 border-black">
-                <Award size={40} />
-              </div>
+              <div className="w-20 h-20 bg-black text-primary flex items-center justify-center rounded-lg rotate-[-3deg] mb-2 border-2 border-black"><Award size={40} /></div>
               <span className="font-label text-xs uppercase font-bold">Ego Level: God</span>
             </div>
             <div>
@@ -666,9 +582,7 @@ const HallOfShameScreen = ({ data }: { data: any }) => (
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             <div className="md:col-span-2 space-y-6">
-              <p className="font-body text-xl font-medium leading-relaxed">
-                {data ? data.medicalAutopsy : "Run a case first"}"
-              </p>
+              <p className="font-body text-xl font-medium leading-relaxed">{data ? data.medicalAutopsy : "Run a case first"}</p>
               <div className="bg-black/5 p-6 rounded-lg border-l-8 border-black italic font-body">
                 <span className="font-label block not-italic font-black text-xs uppercase mb-2">Top Roast:</span>
                 "{data ? data.topRoast : "No roast yet"}"
@@ -678,10 +592,7 @@ const HallOfShameScreen = ({ data }: { data: any }) => (
               <span className="font-label uppercase text-xs mb-1">Pettiness Score</span>
               <span className="font-headline text-6xl font-black text-primary">{data ? (data.pettinessScore / 10).toFixed(1) : "0.0"}</span>
               <div className="w-full h-2 bg-white/10 mt-4 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-primary"
-                  style={{ width: `${data ? data.pettinessScore : 0}%` }}
-                ></div>
+                <div className="h-full bg-primary" style={{ width: `${data ? data.pettinessScore : 0}%` }}></div>
               </div>
             </div>
           </div>
@@ -701,20 +612,15 @@ const HallOfShameScreen = ({ data }: { data: any }) => (
 
       <aside className="lg:col-span-4 space-y-8">
         <div className="bg-surface-high p-6 rounded-lg border-l-4 border-primary sticker-shadow">
-          <h5 className="font-headline text-xl font-black uppercase mb-6 flex items-center gap-2">
-            <TrendingUp className="text-primary" /> Most Fragile This Week
-          </h5>
+          <h5 className="font-headline text-xl font-black uppercase mb-6 flex items-center gap-2"><TrendingUp className="text-primary" /> Most Fragile This Week</h5>
           <div className="space-y-4">
             <LeaderboardItem rank="01" name="@SynergySam" votes="892" />
             <LeaderboardItem rank="02" name="@LinkedInLord" votes="754" />
             <LeaderboardItem rank="03" name="@CryptoKingPin" votes="412" />
           </div>
         </div>
-
         <div className="bg-surface-high p-6 rounded-lg border-l-4 border-secondary sticker-shadow">
-          <h5 className="font-headline text-xl font-black uppercase mb-6 flex items-center gap-2">
-            <Bell className="text-secondary" /> High Pettiness Scores
-          </h5>
+          <h5 className="font-headline text-xl font-black uppercase mb-6 flex items-center gap-2"><Bell className="text-secondary" /> High Pettiness Scores</h5>
           <div className="space-y-4">
             <ScoreItem label="Airfryer Gate" score="9.9" />
             <ScoreItem label="The Font Correcter" score="9.6" />
@@ -822,7 +728,7 @@ Respond with exactly this JSON structure:
   "evidenceC": "specific behavior from the incident as exhibit C",
   "topRoast": "the single best roast line about this incident",
   "allScores": {
-    "Main Character": <number 0-99, how much this incident matches this type>,
+    "Main Character": <number 0-99>,
     "Unsolicited Takeover": <number 0-99>,
     "Fragile Genius": <number 0-99>,
     "Credit Stealer": <number 0-99>,
@@ -833,21 +739,18 @@ Respond with exactly this JSON structure:
 }
 The allScores are independent probability scores (NOT summing to 100). The primary egoType must have the highest score matching the confidence value.`;
 
-      const response = await fetch(
-        'https://api.groq.com/openai/v1/chat/completions',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`
-          },
-          body: JSON.stringify({
-            model: 'llama-3.3-70b-versatile',
-            max_tokens: 1500,
-            messages: [{ role: 'user', content: prompt }]
-          })
-        }
-      );
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          max_tokens: 1500,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
 
       const result = await response.json();
 
@@ -860,7 +763,7 @@ The allScores are independent probability scores (NOT summing to 100). The prima
       const clean = text.replace(/```json|```/g, '').trim();
       const data = JSON.parse(clean);
       setAnalysisResult(data);
-      setScreen('hall-of-shame');
+      setScreen('evidence');
     } catch (err) {
       console.error('Groq error:', err);
       alert('Something went wrong: ' + (err as Error).message);
@@ -873,30 +776,11 @@ The allScores are independent probability scores (NOT summing to 100). The prima
     <div className="min-h-screen">
       <AnimatePresence>
         {isLoading && (
-          <motion.div
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex overflow-hidden"
-          >
-            <motion.div
-              initial={{ x: 0 }}
-              exit={{ x: '-100%' }}
-              transition={{ duration: 1, ease: [0.7, 0, 0.3, 1] }}
-              className="absolute inset-y-0 left-0 w-1/2 bg-[#0d0d0f] border-r border-primary/20 z-10"
-            />
-            <motion.div
-              initial={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ duration: 1, ease: [0.7, 0, 0.3, 1] }}
-              className="absolute inset-y-0 right-0 w-1/2 bg-[#0d0d0f] border-l border-primary/20 z-10"
-            />
+          <motion.div initial={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] flex overflow-hidden">
+            <motion.div initial={{ x: 0 }} exit={{ x: '-100%' }} transition={{ duration: 1, ease: [0.7, 0, 0.3, 1] }} className="absolute inset-y-0 left-0 w-1/2 bg-[#0d0d0f] border-r border-primary/20 z-10" />
+            <motion.div initial={{ x: 0 }} exit={{ x: '100%' }} transition={{ duration: 1, ease: [0.7, 0, 0.3, 1] }} className="absolute inset-y-0 right-0 w-1/2 bg-[#0d0d0f] border-l border-primary/20 z-10" />
             <div className="relative z-20 w-full h-full flex flex-col items-center justify-center pointer-events-none">
-              <motion.div
-                initial={{ scale: 5, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.6, type: 'spring' }}
-                className="bg-primary text-black px-12 py-6 border-8 border-black shadow-[20px_20px_0_0_rgba(0,0,0,0.5)] rotate-[-5deg]"
-              >
+              <motion.div initial={{ scale: 5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.6, type: 'spring' }} className="bg-primary text-black px-12 py-6 border-8 border-black shadow-[20px_20px_0_0_rgba(0,0,0,0.5)] rotate-[-5deg]">
                 <div className="font-bebas text-8xl leading-none">TOP SECRET</div>
                 <div className="font-label text-sm tracking-[0.5em] font-black mt-2 border-t-4 border-black pt-2">AUTOPSY IN PROGRESS</div>
               </motion.div>
@@ -911,13 +795,7 @@ The allScores are independent probability scores (NOT summing to 100). The prima
 
       <main className="lg:pl-72 pt-24 min-h-screen">
         <AnimatePresence mode="wait">
-          <motion.div
-            key={screen}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-          >
+          <motion.div key={screen} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3 }}>
             {screen === 'autopsy' && <AutopsyScreen onDissect={handleDissect} isAnalyzing={isAnalyzing} result={analysisResult} />}
             {screen === 'evidence' && <EvidenceScreen data={analysisResult} />}
             {screen === 'case-master' && <CaseMasterScreen data={analysisResult} />}
