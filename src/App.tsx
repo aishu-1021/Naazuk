@@ -2,7 +2,7 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
-
+import * as htmlToImage from 'html-to-image';
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Search, 
@@ -48,6 +48,18 @@ interface CaseData {
   evidence: string[];
 }
 
+// --- Constants ---
+
+const EGO_TYPES = [
+  { key: "Main Character", emoji: "👑", desc: "Treats every conversation like their Netflix special" },
+  { key: "Unsolicited Takeover", emoji: "🏃", desc: "Redoes your work because they simply cannot help themselves" },
+  { key: "Fragile Genius", emoji: "🧠", desc: "Always ready to explain why you are wrong" },
+  { key: "Credit Stealer", emoji: "🏆", desc: "Looks like someone's ego is writing checks their talent can't cash" },
+  { key: "LinkedIn Warrior", emoji: "📱", desc: "Weaponises professional platforms for personal drama" },
+  { key: "Pathetic Juggler", emoji: "🤹", desc: "Trying to keep multiple people emotionally on the hook" },
+  { key: "Convenient Amnesia", emoji: "😴", desc: "Forgets everything they said the moment it becomes inconvenient" },
+];
+
 // --- Components ---
 
 const Marquee = ({ items, className = "" }: { items: string[], className?: string }) => (
@@ -75,9 +87,9 @@ const Sidebar = ({ currentScreen, setScreen }: { currentScreen: Screen, setScree
       <div className="px-6 mb-8">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-primary">
-            <img 
-              className="w-full h-full object-cover" 
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuATKDj9cl5foN9NBHVZrgRpIEL2O7jYOMfKHRAGloHLZf5lT1Gcjy-M-iNaNKN3EUdXWxBNL8Brw-tjSB7ySpe49d0JEKZ5owDDOTPEv3LIdABSb-dpeHPCNUHbHlj9MjQlAY_BvarX9sIChP4LNahyCWyz7wPPahcmP5daWTKDOkg9OPfe9cRTEGAXHpBqboUQvkGFbwlxUAlXb88ONE_vHlxbYBF9dHztHIm8GKNE5q9LaEKeQeCVV4EbXpfD4qvYXoSVpJZZItM" 
+            <img
+              className="w-full h-full object-cover"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuATKDj9cl5foN9NBHVZrgRpIEL2O7jYOMfKHRAGloHLZf5lT1Gcjy-M-iNaNKN3EUdXWxBNL8Brw-tjSB7ySpe49d0JEKZ5owDDOTPEv3LIdABSb-dpeHPCNUHbHlj9MjQlAY_BvarX9sIChP4LNahyCWyz7wPPahcmP5daWTKDOkg9OPfe9cRTEGAXHpBqboUQvkGFbwlxUAlXb88ONE_vHlxbYBF9dHztHIm8GKNE5q9LaEKeQeCVV4EbXpfD4qvYXoSVpJZZItM"
               alt="Subject Avatar"
             />
           </div>
@@ -86,22 +98,22 @@ const Sidebar = ({ currentScreen, setScreen }: { currentScreen: Screen, setScree
             <div className="text-[10px] text-white/50 font-label uppercase">Status: Clinically Fragile</div>
           </div>
         </div>
-        <button 
+        <button
           onClick={() => setScreen('autopsy')}
           className="w-full py-3 bg-error text-white font-label text-xs font-bold skew-x-[-12deg] hover:brightness-125 transition-all sticker-shadow"
         >
           NEW DISSECTION
         </button>
       </div>
-      
+
       <nav className="flex flex-col gap-1">
         {navItems.map((item) => (
           <button
             key={item.id}
             onClick={() => setScreen(item.id as Screen)}
             className={`flex items-center gap-3 px-6 py-4 font-label text-sm font-bold transition-all ${
-              currentScreen === item.id 
-                ? 'bg-primary text-black skew-x-[-12deg] mx-2' 
+              currentScreen === item.id
+                ? 'bg-primary text-black skew-x-[-12deg] mx-2'
                 : 'text-white/50 hover:text-white hover:bg-white/5'
             }`}
           >
@@ -144,10 +156,10 @@ const TopBar = ({ title }: { title: string }) => (
 
 // --- Screen Components ---
 
-const AutopsyScreen = ({ onDissect }: { onDissect: (incident: string) => void }) => {
+const AutopsyScreen = ({ onDissect, isAnalyzing, result }: { onDissect: (incident: string) => void, isAnalyzing: boolean, result: any }) => {
   const [incident, setIncident] = useState('');
   const [score, setScore] = useState(0);
-  const targetScore = 87;
+  const targetScore = result ? result.pettinessScore : 87;
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -162,13 +174,13 @@ const AutopsyScreen = ({ onDissect }: { onDissect: (incident: string) => void })
       }, 20);
     }, 1000);
     return () => clearTimeout(timer);
-  }, []);
+  }, [targetScore]);
 
   return (
     <div className="space-y-24 pb-24">
       {/* Hero */}
       <section className="px-6 py-20 flex flex-col items-center text-center">
-        <motion.h1 
+        <motion.h1
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           className="font-bebas text-7xl md:text-9xl leading-none text-white tracking-tight mb-4 drop-shadow-[0_10px_0_#A90219]"
@@ -179,8 +191,8 @@ const AutopsyScreen = ({ onDissect }: { onDissect: (incident: string) => void })
           Describe the incident. We'll handle the autopsy. <br/>
           <span className="text-tertiary font-bold">No egos were spared in the making of this report.</span>
         </p>
-        <Marquee 
-          items={["Main Character Syndrome", "Fragile Genius", "Unsolicited Takeover", "LinkedIn Warrior", "Reply-Guy Energy", "Aesthetic Gatekeeper"]} 
+        <Marquee
+          items={["Main Character Syndrome", "Fragile Genius", "Unsolicited Takeover", "LinkedIn Warrior", "Reply-Guy Energy", "Aesthetic Gatekeeper"]}
           className="mt-10"
         />
       </section>
@@ -196,18 +208,19 @@ const AutopsyScreen = ({ onDissect }: { onDissect: (incident: string) => void })
           </div>
           <label className="block font-bebas text-4xl mb-6 text-white">WHAT HAPPENED, PRINCESS?</label>
           <div className="relative">
-            <textarea 
+            <textarea
               value={incident}
               onChange={(e) => setIncident(e.target.value)}
-              className="w-full h-48 bg-background border-4 border-white/10 rounded-none p-6 text-xl font-body focus:border-primary focus:ring-0 transition-colors placeholder:text-white/20 text-white" 
+              className="w-full h-48 bg-background border-4 border-white/10 rounded-none p-6 text-xl font-body focus:border-primary focus:ring-0 transition-colors placeholder:text-white/20 text-white"
               placeholder="He rejected my frontend and made his own... while wearing MY aesthetic..."
             />
             <div className="absolute -bottom-4 -right-4">
-              <button 
+              <button
                 onClick={() => onDissect(incident)}
-                className="bg-error hover:bg-red-600 text-white font-bebas text-3xl px-12 py-6 border-4 border-black shadow-[6px_6px_0_0_#000] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all flex items-center gap-3"
+                disabled={isAnalyzing}
+                className="bg-error hover:bg-red-600 disabled:opacity-50 text-white font-bebas text-3xl px-12 py-6 border-4 border-black shadow-[6px_6px_0_0_#000] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all flex items-center gap-3"
               >
-                DISSECT THE EGO <ArrowRight size={32} />
+                {isAnalyzing ? 'ANALYSING EGO...' : 'DISSECT THE EGO'} <ArrowRight size={32} />
               </button>
             </div>
           </div>
@@ -225,7 +238,7 @@ const AutopsyScreen = ({ onDissect }: { onDissect: (incident: string) => void })
                 <span className="font-bebas text-7xl text-error">{score}/100</span>
               </div>
               <div className="w-full h-12 bg-background border-4 border-black overflow-hidden flex">
-                <motion.div 
+                <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${score}%` }}
                   className="h-full bg-gradient-to-r from-green-500 via-yellow-400 to-error relative"
@@ -234,14 +247,14 @@ const AutopsyScreen = ({ onDissect }: { onDissect: (incident: string) => void })
                 </motion.div>
               </div>
               <div className="mt-6 font-bebas text-5xl text-center p-4 bg-error text-white skew-x-[-5deg]">
-                VERDICT: CLINICALLY FRAGILE
+                VERDICT: {result ? result.verdict : 'CLINICALLY FRAGILE'}
               </div>
             </div>
           </div>
           <div className="relative h-[400px]">
-            <img 
-              className="w-full h-full object-cover rounded-lg border-4 border-primary tilt-2 grayscale hover:grayscale-0 transition-all duration-700" 
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZSavtmIzTs0qs1-naLCXfZDLfgGeNgttfEfODPMOoYqhkAl-vUdhu-u6aC5EX_Jt53dEe7kdaJCWsfOaPpiccrQ71EO3kpyqe2xMPl58E0QZfPMoy-zp8Z_7SuPlMFaHAknj4e5GZoUS9_IPE7HohlL8EvRJy_5i9MJ9q6o3NTXP3emCxTVtUCcEa2RcSMKqmbQQ1ykjyRXgfF_oHcvIUPcoqpMKOkfCR7t9W0o_kMuSIa9YmSqX8onA8Ly-AKhHA6wBeIsI9LsM" 
+            <img
+              className="w-full h-full object-cover rounded-lg border-4 border-primary tilt-2 grayscale hover:grayscale-0 transition-all duration-700"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZSavtmIzTs0qs1-naLCXfZDLfgGeNgttfEfODPMOoYqhkAl-vUdhu-u6aC5EX_Jt53dEe7kdaJCWsfOaPpiccrQ71EO3kpyqe2xMPl58E0QZfPMoy-zp8Z_7SuPlMFaHAknj4e5GZoUS9_IPE7HohlL8EvRJy_5i9MJ9q6o3NTXP3emCxTVtUCcEa2RcSMKqmbQQ1ykjyRXgfF_oHcvIUPcoqpMKOkfCR7t9W0o_kMuSIa9YmSqX8onA8Ly-AKhHA6wBeIsI9LsM"
               alt="Evidence"
             />
             <div className="absolute -top-6 -left-6 bg-tertiary text-black font-label px-4 py-2 font-black uppercase text-xs rotate-[-12deg]">EVIDENCE #A42</div>
@@ -249,53 +262,61 @@ const AutopsyScreen = ({ onDissect }: { onDissect: (incident: string) => void })
         </div>
       </section>
 
-      {/* Reports */}
-      <section className="px-6 py-24 max-w-[1400px] mx-auto">
-        <div className="mb-16 flex flex-col items-center">
-          <h2 className="font-bebas text-7xl mb-4">THE AUTOPSY REPORT</h2>
-          <div className="h-2 w-48 bg-primary"></div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-start">
-          <ReportCard 
-            icon={<Microscope size={32} />} 
-            title="🔬 MEDICAL AUTOPSY" 
-            content="Patient displays severe inflammation of the 'I-AM-THE-ONLY-ONE' lobe. Chronic rejection of external input observed. Prognosis: Lethal levels of self-importance."
-            color="bg-tertiary"
-            tilt="tilt-1"
-          />
-          <ReportCard 
-            icon={<Globe size={32} />} 
-            title="🌐 EGO TRANSLATOR" 
-            content="&quot;I think we should pivot the strategy&quot; actually means &quot;I didn't think of it first, so it must be destroyed and rebranded under my name.&quot;"
-            color="bg-primary"
-            textColor="text-black"
-            tilt="tilt-2"
-          />
-          <ReportCard 
-            icon={<Plane size={32} />} 
-            title="🛂 RED FLAG IMMIGRATION" 
-            content="Visa denied. Your citizenship in the 'Cool Colleague' zone has been revoked due to excessive credit-stealing at altitudes above 30,000 feet."
-            color="bg-secondary"
-            tilt="tilt-3"
-          />
-          <ReportCard 
-            icon={<Coffee size={32} />} 
-            title="🍵 SMILE & STAB" 
-            content="The passive-aggression is so thick we could serve it on toast. Those three exclamation marks in your Slack message? We heard the scream through the pixels."
-            color="bg-tertiary"
-            tilt="tilt-2"
-          />
-          <ReportCard 
-            icon={<Film size={32} />} 
-            title="🎬 VILLAIN ARC" 
-            content="You're not the protagonist in a deep psychological drama; you're just the person who didn't let anyone else talk in the 15-minute standup. The soundtrack is silence. Everyone is tired."
-            color="bg-primary"
-            textColor="text-black"
-            tilt="tilt-1"
-            className="lg:col-span-2"
-          />
-        </div>
-      </section>
+      {/* Reports — only show if we have real results */}
+      {result && (
+        <section className="px-6 py-24 max-w-[1400px] mx-auto">
+          <div className="mb-16 flex flex-col items-center">
+            <h2 className="font-bebas text-7xl mb-4">THE AUTOPSY REPORT</h2>
+            <div className="h-2 w-48 bg-primary"></div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-start">
+            <ReportCard
+              icon={<Microscope size={32} />}
+              title="🔬 MEDICAL AUTOPSY"
+              content={result.medicalAutopsy}
+              color="bg-tertiary"
+              tilt="tilt-1"
+            />
+            <ReportCard
+              icon={<Globe size={32} />}
+              title="🌐 EGO TRANSLATOR"
+              content={result.egoTranslator}
+              color="bg-primary"
+              textColor="text-black"
+              tilt="tilt-2"
+            />
+            <ReportCard
+              icon={<Plane size={32} />}
+              title="🛂 RED FLAG IMMIGRATION"
+              content={result.redFlagImmigration}
+              color="bg-secondary"
+              tilt="tilt-3"
+            />
+            <ReportCard
+              icon={<Coffee size={32} />}
+              title="🍵 SMILE & STAB"
+              content={result.smileAndStab}
+              color="bg-tertiary"
+              tilt="tilt-2"
+            />
+            <ReportCard
+              icon={<Film size={32} />}
+              title="🎬 VILLAIN ARC"
+              content={result.villainArc}
+              color="bg-primary"
+              textColor="text-black"
+              tilt="tilt-1"
+              className="lg:col-span-2"
+            />
+          </div>
+
+          {/* Top Roast */}
+          <div className="mt-12 p-8 bg-error border-4 border-black sticker-shadow text-center">
+            <p className="font-label text-xs uppercase tracking-widest text-white/70 mb-3">⚡ TOP ROAST OF THE DAY</p>
+            <p className="font-bebas text-4xl text-white">{result.topRoast}</p>
+          </div>
+        </section>
+      )}
     </div>
   );
 };
@@ -311,97 +332,200 @@ const ReportCard = ({ icon, title, content, color, textColor = "text-white", til
   </div>
 );
 
-const EvidenceScreen = () => (
-  <div className="space-y-0">
-    <section className="w-full bg-primary py-12 px-12 flex justify-between items-center relative overflow-hidden">
-      <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, black 1px, transparent 0)', backgroundSize: '24px 24px' }}></div>
-      <div className="relative z-10">
-        <h1 className="font-headline font-black text-6xl text-black tracking-tighter leading-none mb-2 uppercase">THE VERDICT IS IN.</h1>
-        <p className="font-body text-black text-xl font-medium max-w-2xl">After careful examination of the incident, the tribunal has reached a conclusion.</p>
+// --- Diagnosis Card with animated bar ---
+
+const DiagnosisCard = ({ emoji, title, desc, prob, active = false, delay = 0 }: any) => {
+  const [barWidth, setBarWidth] = useState(0);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setBarWidth(prob), 100 + delay);
+    return () => clearTimeout(timer);
+  }, [prob, delay]);
+
+  const barColor = prob >= 70 ? '#FF4D4D' : prob >= 40 ? '#FFE500' : prob >= 20 ? '#7B5EA7' : '#444444';
+
+  return (
+    <div
+      className={`bg-surface-high p-6 flex flex-col gap-4 transition-all duration-300 hover:-translate-y-2 relative ${
+        active ? 'border-4 border-primary' : 'border border-white/10 opacity-70 hover:opacity-100'
+      }`}
+      style={{ minHeight: '220px' }}
+    >
+      {active && (
+        <div className="absolute -top-4 -right-4 bg-error text-white font-headline font-black px-4 py-1 rotate-12 border-2 border-white shadow-lg text-sm z-10">
+          DETECTED
+        </div>
+      )}
+      <div className="text-3xl">{emoji}</div>
+      <div>
+        <h4 className={`font-headline font-black text-lg uppercase leading-tight ${active ? 'text-primary' : 'text-white'}`}>
+          {title}
+        </h4>
+        <p className="font-body text-white/50 text-xs mt-1 leading-relaxed">{desc}</p>
       </div>
-      <div className="relative z-10">
-        <div className="border-4 border-error px-6 py-3 rounded-none rotate-3 bg-black/5 flex flex-col items-center">
-          <span className="font-headline font-black text-error text-2xl tracking-widest">UNSOLICITED</span>
-          <span className="font-headline font-black text-error text-4xl tracking-widest leading-none">TAKEOVER</span>
+      <div className="mt-auto">
+        <div className="flex justify-between font-label text-xs mb-2">
+          <span className="text-white/50">PROBABILITY</span>
+          <span className={active ? 'text-primary font-bold' : 'text-white/70'}>{prob}%</span>
+        </div>
+        <div className="w-full h-2 bg-black/50 rounded-full overflow-hidden">
+          <div
+            className="h-full rounded-full transition-all duration-1000 ease-out"
+            style={{ width: `${barWidth}%`, backgroundColor: barColor }}
+          />
         </div>
       </div>
-    </section>
+    </div>
+  );
+};
 
-    <section className="max-w-5xl mx-auto py-24 px-8">
-      <div className="bg-surface-high border-4 border-primary p-12 relative flex flex-col items-center text-center shadow-[20px_20px_0px_#000]">
-        <div className="absolute -top-6 -left-6 bg-tertiary text-white font-label font-bold px-4 py-2 rotate-[-5deg] shadow-lg">CASE ID: #882-QX</div>
-        <span className="text-8xl mb-8">🏃</span>
-        <h2 className="font-headline font-black text-8xl text-primary tracking-tighter mb-4 italic uppercase">UNSOLICITED TAKEOVER</h2>
-        <p className="font-body text-2xl text-white/70 max-w-3xl leading-relaxed mb-12">
-          Subject exhibited aggressive dominance behavior without external provocation. Neural patterns indicate a 100% disregard for mutual consent in conversation flow.
-        </p>
-        <div className="w-full max-w-2xl mb-16">
-          <div className="flex justify-between font-label text-primary font-bold mb-4 tracking-widest uppercase">
-            <span>The classifier is very sure about this one</span>
-            <span>94%</span>
+// --- Evidence Screen ---
+
+const EvidenceScreen = ({ data }: { data: any }) => {
+  const [confBarWidth, setConfBarWidth] = useState(0);
+
+  useEffect(() => {
+    if (!data) return;
+    const timer = setTimeout(() => setConfBarWidth(data.confidence), 100);
+    return () => clearTimeout(timer);
+  }, [data]);
+
+  if (!data) return (
+    <div className="flex items-center justify-center h-96">
+      <p className="font-bebas text-4xl text-white/40">NO CASE LOADED. GO BACK AND DISSECT.</p>
+    </div>
+  );
+
+  // Build ordered diagnosis list: detected type first, rest sorted by score desc
+  const allScores: Record<string, number> = data.allScores || {};
+
+  const orderedTypes = [...EGO_TYPES].sort((a, b) => {
+    if (a.key === data.egoType) return -1;
+    if (b.key === data.egoType) return 1;
+    return (allScores[b.key] || 0) - (allScores[a.key] || 0);
+  });
+
+  return (
+    <div className="space-y-0">
+      {/* Verdict Banner */}
+      <section className="w-full bg-primary py-12 px-12 flex justify-between items-center relative overflow-hidden">
+        <div
+          className="absolute inset-0 opacity-10 pointer-events-none"
+          style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, black 1px, transparent 0)', backgroundSize: '24px 24px' }}
+        />
+        <div className="relative z-10">
+          <h1 className="font-headline font-black text-6xl text-black tracking-tighter leading-none mb-2 uppercase">
+            THE VERDICT IS IN.
+          </h1>
+          <p className="font-body text-black text-xl font-medium max-w-2xl">
+            After careful examination of the incident, the tribunal has reached a conclusion.
+          </p>
+        </div>
+        <div className="relative z-10">
+          <div className="border-4 border-error px-6 py-3 rounded-none rotate-3 bg-black/5 flex flex-col items-center">
+            <span className="font-headline font-black text-error text-4xl tracking-widest leading-none">
+              {data.egoType}
+            </span>
           </div>
-          <div className="w-full h-8 bg-background border-2 border-primary/20 p-1">
-            <div className="h-full bg-primary relative overflow-hidden w-[94%]">
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-pulse"></div>
+        </div>
+      </section>
+
+      {/* Main Evidence Card */}
+      <section className="max-w-5xl mx-auto py-24 px-8">
+        <div className="bg-surface-high border-4 border-primary p-12 relative flex flex-col items-center text-center shadow-[20px_20px_0px_#000]">
+          <div className="absolute -top-6 -left-6 bg-tertiary text-white font-label font-bold px-4 py-2 rotate-[-5deg] shadow-lg">
+            CASE ID: #882-QX
+          </div>
+          <span className="text-8xl mb-8">{data.egoEmoji}</span>
+          <h2 className="font-headline font-black text-8xl text-primary tracking-tighter mb-4 italic uppercase">
+            {data.egoType}
+          </h2>
+          <p className="font-body text-2xl text-white/70 max-w-3xl leading-relaxed mb-12">
+            {data.medicalAutopsy}
+          </p>
+
+          {/* Animated Confidence Bar */}
+          <div className="w-full max-w-2xl mb-16">
+            <div className="flex justify-between font-label text-primary font-bold mb-4 tracking-widest uppercase">
+              <span>The classifier is very sure about this one</span>
+              <span>{data.confidence}%</span>
+            </div>
+            <div className="w-full h-8 bg-background border-2 border-primary/20 p-1">
+              <div
+                className="h-full bg-primary relative overflow-hidden transition-all duration-[1200ms] ease-out"
+                style={{ width: `${confBarWidth}%` }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-pulse" />
+              </div>
             </div>
           </div>
+
+          {/* Exhibit Cards */}
+          <div className="flex flex-wrap justify-center gap-12 w-full">
+            {[
+              { label: 'Exhibit A', content: data.evidenceA, icon: <Copy size={32} /> },
+              { label: 'Exhibit B', content: data.evidenceB, icon: <Award size={32} /> },
+              { label: 'Exhibit C', content: data.evidenceC, icon: <Settings size={32} /> },
+            ].map((ex) => (
+              <div
+                key={ex.label}
+                className="bg-primary text-black p-6 w-56 h-56 shadow-xl -rotate-2 transform hover:rotate-0 transition-transform flex flex-col justify-between"
+              >
+                {ex.icon}
+                <p className="font-body font-bold text-lg leading-tight text-left">{ex.content}</p>
+                <span className="font-label text-[10px] uppercase opacity-60 text-left">{ex.label}</span>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="flex flex-wrap justify-center gap-12 w-full">
-          <div className="bg-primary text-black p-6 w-56 h-56 shadow-xl -rotate-2 transform hover:rotate-0 transition-transform flex flex-col justify-between">
-            <Copy size={32} />
-            <p className="font-body font-bold text-lg leading-tight text-left">Interrupts every 4.2 seconds on average.</p>
-            <span className="font-label text-[10px] uppercase opacity-60 text-left">Exhibit A</span>
-          </div>
-          <div className="bg-primary text-black p-6 w-56 h-56 shadow-xl rotate-3 transform hover:rotate-0 transition-transform flex flex-col justify-between">
-            <Award size={32} />
-            <p className="font-body font-bold text-lg leading-tight text-left">Decibel level spiked 12dB above ambient.</p>
-            <span className="font-label text-[10px] uppercase opacity-60 text-left">Exhibit B</span>
-          </div>
-          <div className="bg-primary text-black p-6 w-56 h-56 shadow-xl -rotate-1 transform hover:rotate-0 transition-transform flex flex-col justify-between">
-            <Settings size={32} />
-            <p className="font-body font-bold text-lg leading-tight text-left">Zero recognition of social cues detected.</p>
-            <span className="font-label text-[10px] uppercase opacity-60 text-left">Exhibit C</span>
-          </div>
+      </section>
+
+      {/* Full Diagnosis — all 7 types with real dynamic scores */}
+      <section className="py-24 px-12 bg-surface">
+        <h3 className="font-headline font-black text-6xl text-white tracking-tighter mb-4 uppercase italic">
+          The Full Diagnosis
+        </h3>
+        <p className="font-body text-white/50 mb-16 text-lg">
+          All ego types scored in real-time against your incident.
+        </p>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {orderedTypes.map((type, index) => {
+            const isDetected = type.key === data.egoType;
+            const score = isDetected
+              ? data.confidence
+              : (allScores[type.key] ?? 0);
+            return (
+              <DiagnosisCard
+                key={type.key}
+                emoji={type.emoji}
+                title={type.key}
+                desc={type.desc}
+                prob={score}
+                active={isDetected}
+                delay={index * 150}
+              />
+            );
+          })}
         </div>
-      </div>
-    </section>
-
-    <section className="py-24 px-12 bg-surface">
-      <h3 className="font-headline font-black text-6xl text-white tracking-tighter mb-16 uppercase italic">The Full Diagnosis</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        <DiagnosisCard emoji="🏃" title="UNSOLICITED TAKEOVER" desc="Aggressive dominance in social environments." prob={94} color="bg-primary" active />
-        <DiagnosisCard emoji="🤡" title="Performance Artist" desc="Treats every conversation like a Netflix special." prob={42} color="bg-tertiary" />
-        <DiagnosisCard emoji="🤴" title="Silent Sovereign" desc="Expects everyone to bow to their unvoiced wisdom." prob={18} color="bg-secondary" />
-        <DiagnosisCard emoji="🪑" title="The Wallpaper" desc="Passive-aggressive presence that absorbs light." prob={12} color="bg-white" />
-        <DiagnosisCard emoji="🛡️" title="Fragile Defender" desc="Always ready to explain why you are wrong." prob={9} color="bg-tertiary" />
-        <DiagnosisCard emoji="🔋" title="Attention Vampire" desc="Drains the room's energy for personal gain." prob={6} color="bg-primary" />
-        <DiagnosisCard emoji="🌋" title="The Eruptor" desc="Sudden bursts of ego that leave ash in their wake." prob={2} color="bg-error" />
-      </div>
-    </section>
-  </div>
-);
-
-const DiagnosisCard = ({ emoji, title, desc, prob, color, active = false }: any) => (
-  <div className={`bg-surface-high p-8 flex flex-col gap-6 transition-all duration-300 hover:-translate-y-2 ${active ? 'border-4 border-primary' : 'opacity-60 hover:opacity-100'} relative`}>
-    {active && <div className="absolute -top-4 -right-4 bg-error text-white font-headline font-black px-4 py-1 rotate-12 border-2 border-white shadow-lg">DETECTED</div>}
-    <div className="text-4xl">{emoji}</div>
-    <div>
-      <h4 className={`font-headline font-black text-2xl uppercase ${active ? 'text-primary' : ''}`}>{title}</h4>
-      <p className="font-body text-white/50 text-sm mt-2">{desc}</p>
+      </section>
     </div>
-    <div className="mt-auto">
-      <div className="flex justify-between font-label text-xs mb-2">
-        <span>PROBABILITY</span>
-        <span className={active ? 'text-primary' : ''}>{prob}%</span>
-      </div>
-      <div className="w-full h-2 bg-background rounded-full">
-        <div className={`h-full rounded-full ${color}`} style={{ width: `${prob}%` }}></div>
-      </div>
-    </div>
-  </div>
-);
+  );
+};
 
-const CaseMasterScreen = () => (
+const CaseMasterScreen = ({ data }: { data: any }) => {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const handleDownload = async () => {
+    if (!cardRef.current) return;
+
+    const dataUrl = await htmlToImage.toPng(cardRef.current);
+
+    const link = document.createElement('a');
+    link.download = 'naazuk-case.png';
+    link.href = dataUrl;
+    link.click();
+  };
+
+  return (
   <div className="max-w-6xl mx-auto px-12 py-16">
     <section className="mb-20">
       <h2 className="font-headline font-black text-7xl md:text-8xl text-white mb-4 tracking-tighter leading-none uppercase">
@@ -418,31 +542,31 @@ const CaseMasterScreen = () => (
           <div className="absolute -top-4 -right-6 bg-primary text-black font-label font-bold px-4 py-2 rotate-[12deg] z-30 shadow-xl">
             EVIDENCE #8291
           </div>
-          <div className="w-[380px] aspect-[9/16] bg-[#111] border-[6px] border-secondary p-8 flex flex-col relative overflow-hidden shadow-[15px_15px_0_0_#A90219] rotate-[-2deg]">
+          <div ref={cardRef} className="w-[380px] aspect-[9/16] bg-[#111] border-[6px] border-secondary p-8 flex flex-col relative overflow-hidden shadow-[15px_15px_0_0_#A90219] rotate-[-2deg]">
             <div className="flex justify-between items-start mb-12">
               <div className="font-label text-secondary text-xs tracking-[0.2em]">CASE FILE: #EGO-8291</div>
               <div className="bg-secondary/20 text-secondary border border-secondary px-2 py-1 text-[10px] font-bold uppercase tracking-tighter">CLASSIFIED</div>
             </div>
             <h3 className="font-headline font-black text-5xl text-white leading-[0.85] mb-8 uppercase italic">
-              UNSOLICITED<br/>TAKEOVER
+              {data ? data.egoType : 'UNSOLICITED TAKEOVER'}
             </h3>
             <div className="w-full h-1 bg-secondary/30 mb-10"></div>
             <div className="space-y-10">
               <div>
                 <label className="font-label text-[10px] text-white/40 tracking-widest block mb-2 uppercase italic">INCIDENT SUMMARY</label>
-                <p className="font-body text-sm text-white/80 leading-snug">Subject attempted a "thought-leader" pivot on LinkedIn without having a single original thought since 2014.</p>
+                <p className="font-body text-sm text-white/80 leading-snug">{data ? data.medicalAutopsy : 'Submit an incident to generate your case file.'}</p>
               </div>
               <div>
                 <label className="font-label text-[10px] text-white/40 tracking-widest block mb-2 uppercase italic">KEY EVIDENCE</label>
-                <p className="font-headline font-bold text-xl text-primary leading-tight">"You quote-tweeted your own generic advice like it was the Sermon on the Mount."</p>
+                <p className="font-headline font-bold text-xl text-primary leading-tight">"{data ? data.topRoast : 'The verdict awaits.'}"</p>
               </div>
               <div>
                 <div className="flex justify-between items-end mb-2">
                   <label className="font-label text-[10px] text-white/40 tracking-widest uppercase italic">PETTINESS RATING</label>
-                  <span className="font-headline font-black text-3xl text-secondary leading-none">87%</span>
+                  <span className="font-headline font-black text-3xl text-secondary leading-none">{data ? data.pettinessScore : 87}%</span>
                 </div>
                 <div className="w-full h-4 bg-white/10 rounded-full overflow-hidden">
-                  <div className="h-full bg-secondary w-[87%] shadow-[0_0_15px_rgba(255,113,107,0.5)]"></div>
+                  <div className="h-full bg-secondary shadow-[0_0_15px_rgba(255,113,107,0.5)]" style={{width: `${data ? data.pettinessScore : 87}%`}}></div>
                 </div>
               </div>
             </div>
@@ -456,8 +580,20 @@ const CaseMasterScreen = () => (
 
       <div className="lg:col-span-7 space-y-16">
         <section className="grid grid-cols-1 gap-4">
-          <ActionButton icon={<Download />} label="DOWNLOAD IMAGE" color="bg-secondary" shadow="shadow-[8px_8px_0_0_#A90219]" />
-          <ActionButton icon={<LinkIcon />} label="COPY LINK" color="border-4 border-primary text-primary" />
+          <ActionButton
+            icon={<Download />}
+            label="DOWNLOAD IMAGE"
+            onClick={handleDownload}
+          />
+          <ActionButton
+            icon={<LinkIcon />}
+            label="COPY LINK"
+            color="border-4 border-primary text-primary"
+            onClick={() => {
+              navigator.clipboard.writeText(window.location.href);
+              alert("Link copied!");
+            }}
+          />
           <ActionButton icon={<Instagram />} label="SHARE TO INSTAGRAM" color="bg-tertiary" shadow="shadow-[8px_8px_0_0_#2e0061]" />
         </section>
 
@@ -499,9 +635,22 @@ const CaseMasterScreen = () => (
     </section>
   </div>
 );
+};
+const handleDownload = async () => {
+  if (!cardRef.current) return;
 
-const ActionButton = ({ icon, label, color, shadow = "" }: any) => (
-  <button className={`group relative flex items-center justify-between px-8 py-6 rounded-none font-headline font-black text-2xl uppercase tracking-tighter transition-all hover:scale-[1.02] active:scale-95 ${color} ${shadow}`}>
+  const dataUrl = await htmlToImage.toPng(cardRef.current);
+
+  const link = document.createElement('a');
+  link.download = 'naazuk-case.png';
+  link.href = dataUrl;
+  link.click();
+};
+
+const ActionButton = ({ icon, label, color, shadow = "", onClick }: any) => (
+  <button
+    onClick={onClick}
+    className={`group relative flex items-center justify-between px-8 py-6 rounded-none font-headline font-black text-2xl uppercase tracking-tighter transition-all hover:scale-[1.02] active:scale-95 ${color} ${shadow}`}>
     <span className="flex items-center gap-4">
       {icon}
       {label}
@@ -519,7 +668,7 @@ const Toggle = ({ label, active = false }: any) => (
   </div>
 );
 
-const HallOfShameScreen = () => (
+const HallOfShameScreen = ({ data }: { data: any }) => (
   <div className="p-8 md:p-12 max-w-7xl mx-auto space-y-16">
     <section className="flex flex-col items-start gap-6 max-w-3xl">
       <h2 className="font-headline text-6xl md:text-8xl font-black italic uppercase tracking-tighter leading-tight">
@@ -549,25 +698,28 @@ const HallOfShameScreen = () => (
               <span className="font-label text-xs uppercase font-bold">Ego Level: God</span>
             </div>
             <div>
-              <h3 className="font-headline text-4xl font-black uppercase mb-2">The LinkedIn Larpist</h3>
+              <h3 className="font-headline text-4xl font-black uppercase mb-2">{data ? data.egoType : "No Case Yet"}</h3>
               <p className="font-label text-sm opacity-70">Case ID: #HOS-2024-089 • 2h ago</p>
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             <div className="md:col-span-2 space-y-6">
               <p className="font-body text-xl font-medium leading-relaxed">
-                "Posted a 10-paragraph essay about how their morning coffee taught them 'agile synergy' and 'resilient disruption' because the barista didn't say 'Have a nice day' fast enough."
+                {data ? data.medicalAutopsy : "Run a case first"}
               </p>
               <div className="bg-black/5 p-6 rounded-lg border-l-8 border-black italic font-body">
                 <span className="font-label block not-italic font-black text-xs uppercase mb-2">Top Roast:</span>
-                "Bro is out here turning a mild social inconvenience into a TED Talk for bots. Seek grass immediately."
+                "{data ? data.topRoast : "No roast yet"}"
               </div>
             </div>
             <div className="flex flex-col items-center justify-center bg-black text-white p-6 rounded-lg rotate-2">
               <span className="font-label uppercase text-xs mb-1">Pettiness Score</span>
-              <span className="font-headline text-6xl font-black text-primary">9.8</span>
+              <span className="font-headline text-6xl font-black text-primary">{data ? (data.pettinessScore / 10).toFixed(1) : "0.0"}</span>
               <div className="w-full h-2 bg-white/10 mt-4 rounded-full overflow-hidden">
-                <div className="h-full bg-primary w-[98%]"></div>
+                <div
+                  className="h-full bg-primary"
+                  style={{ width: `${data ? data.pettinessScore : 0}%` }}
+                ></div>
               </div>
             </div>
           </div>
@@ -672,40 +824,112 @@ const ScoreItem = ({ label, score }: any) => (
 export default function App() {
   const [screen, setScreen] = useState<Screen>('autopsy');
   const [isLoading, setIsLoading] = useState(true);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisResult, setAnalysisResult] = useState<any>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 3000);
     return () => clearTimeout(timer);
   }, []);
 
-  const handleDissect = (incident: string) => {
-    console.log('Dissecting:', incident);
-    setScreen('evidence');
+  const handleDissect = async (incident: string) => {
+    if (!incident.trim()) return;
+    setIsAnalyzing(true);
+
+    try {
+      const apiKey = import.meta.env.VITE_GROQ_API_KEY;
+
+      const prompt = `You are Naazuk, a dramatic AI ego autopsy tool. Analyze this incident and respond ONLY with valid JSON, no markdown, no backticks.
+
+Incident: "${incident}"
+
+Respond with exactly this JSON structure:
+{
+  "egoType": "one of: Main Character, Unsolicited Takeover, Fragile Genius, Credit Stealer, LinkedIn Warrior, Pathetic Juggler, Convenient Amnesia",
+  "egoEmoji": "matching emoji for the primary type",
+  "confidence": <number 60-99>,
+  "pettinessScore": <number 0-100>,
+  "verdict": "a 3-word dramatic verdict like CLINICALLY FRAGILE",
+  "medicalAutopsy": "dramatic medical autopsy report 2-3 sentences",
+  "egoTranslator": "what they said vs what they meant, 2-3 lines",
+  "redFlagImmigration": "visa denial notice, 2-3 lines",
+  "smileAndStab": "a passive aggressive sweet response they could send, 2 lines",
+  "villainArc": "5-act bollywood villain arc, 3-4 lines",
+  "evidenceA": "specific behavior from the incident as exhibit A",
+  "evidenceB": "specific behavior from the incident as exhibit B",
+  "evidenceC": "specific behavior from the incident as exhibit C",
+  "topRoast": "the single best roast line about this incident",
+  "allScores": {
+    "Main Character": <number 0-99, how much this incident matches this type>,
+    "Unsolicited Takeover": <number 0-99>,
+    "Fragile Genius": <number 0-99>,
+    "Credit Stealer": <number 0-99>,
+    "LinkedIn Warrior": <number 0-99>,
+    "Pathetic Juggler": <number 0-99>,
+    "Convenient Amnesia": <number 0-99>
+  }
+}
+The allScores are independent probability scores (NOT summing to 100). The primary egoType must have the highest score matching the confidence value.`;
+
+      const response = await fetch(
+        'https://api.groq.com/openai/v1/chat/completions',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`
+          },
+          body: JSON.stringify({
+            model: 'llama-3.3-70b-versatile',
+            max_tokens: 1500,
+            messages: [{ role: 'user', content: prompt }]
+          })
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        console.error('API Error:', result);
+        throw new Error(result.error?.message || 'API call failed');
+      }
+
+      const text = result.choices[0].message.content;
+      const clean = text.replace(/```json|```/g, '').trim();
+      const data = JSON.parse(clean);
+      setAnalysisResult(data);
+      setScreen('case-master');
+    } catch (err) {
+      console.error('Groq error:', err);
+      alert('Something went wrong: ' + (err as Error).message);
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   return (
     <div className="min-h-screen">
       <AnimatePresence>
         {isLoading && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[100] flex overflow-hidden"
           >
-            <motion.div 
+            <motion.div
               initial={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ duration: 1, ease: [0.7, 0, 0.3, 1] }}
               className="absolute inset-y-0 left-0 w-1/2 bg-[#0d0d0f] border-r border-primary/20 z-10"
             />
-            <motion.div 
+            <motion.div
               initial={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ duration: 1, ease: [0.7, 0, 0.3, 1] }}
               className="absolute inset-y-0 right-0 w-1/2 bg-[#0d0d0f] border-l border-primary/20 z-10"
             />
             <div className="relative z-20 w-full h-full flex flex-col items-center justify-center pointer-events-none">
-              <motion.div 
+              <motion.div
                 initial={{ scale: 5, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 0.6, type: 'spring' }}
@@ -732,10 +956,10 @@ export default function App() {
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
           >
-            {screen === 'autopsy' && <AutopsyScreen onDissect={handleDissect} />}
-            {screen === 'evidence' && <EvidenceScreen />}
-            {screen === 'case-master' && <CaseMasterScreen />}
-            {screen === 'hall-of-shame' && <HallOfShameScreen />}
+            {screen === 'autopsy' && <AutopsyScreen onDissect={handleDissect} isAnalyzing={isAnalyzing} result={analysisResult} />}
+            {screen === 'evidence' && <EvidenceScreen data={analysisResult} />}
+            {screen === 'case-master' && <CaseMasterScreen data={analysisResult} />}
+            {screen === 'hall-of-shame' && <HallOfShameScreen data={analysisResult} />}
           </motion.div>
         </AnimatePresence>
 
