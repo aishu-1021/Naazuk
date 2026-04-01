@@ -16,7 +16,6 @@ import {
   TrendingUp,
   Download,
   Link as LinkIcon,
-  Instagram,
   Send,
   Copy,
   ArrowRight,
@@ -84,28 +83,6 @@ const Sidebar = ({ currentScreen, setScreen }: { currentScreen: Screen, setScree
 
   return (
     <aside className="hidden lg:flex flex-col fixed left-0 top-0 h-screen w-72 border-r-4 border-primary bg-[#161618] z-40 pt-24">
-      <div className="px-6 mb-8">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-primary">
-            <img
-              className="w-full h-full object-cover"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuATKDj9cl5foN9NBHVZrgRpIEL2O7jYOMfKHRAGloHLZf5lT1Gcjy-M-iNaNKN3EUdXWxBNL8Brw-tjSB7ySpe49d0JEKZ5owDDOTPEv3LIdABSb-dpeHPCNUHbHlj9MjQlAY_BvarX9sIChP4LNahyCWyz7wPPahcmP5daWTKDOkg9OPfe9cRTEGAXHpBqboUQvkGFbwlxUAlXb88ONE_vHlxbYBF9dHztHIm8GKNE5q9LaEKeQeCVV4EbXpfD4qvYXoSVpJZZItM"
-              alt="Subject Avatar"
-            />
-          </div>
-          <div>
-            <div className="font-label text-xs uppercase font-bold text-primary">SUBJECT #8291</div>
-            <div className="text-[10px] text-white/50 font-label uppercase">Status: Clinically Fragile</div>
-          </div>
-        </div>
-        <button
-          onClick={() => setScreen('autopsy')}
-          className="w-full py-3 bg-error text-white font-label text-xs font-bold skew-x-[-12deg] hover:brightness-125 transition-all sticker-shadow"
-        >
-          NEW DISSECTION
-        </button>
-      </div>
-
       <nav className="flex flex-col gap-1">
         {navItems.map((item) => (
           <button
@@ -122,13 +99,6 @@ const Sidebar = ({ currentScreen, setScreen }: { currentScreen: Screen, setScree
           </button>
         ))}
       </nav>
-
-      <div className="mt-auto p-6 border-t border-white/10">
-        <button className="flex items-center gap-3 text-white/50 hover:text-error transition-colors font-label text-xs font-bold uppercase">
-          <LogOut size={16} />
-          Logout
-        </button>
-      </div>
     </aside>
   );
 };
@@ -491,10 +461,9 @@ const CaseMasterScreen = ({ data }: { data: any }) => {
         </div>
 
         <div className="lg:col-span-7 space-y-16">
-          <section className="grid grid-cols-1 gap-4">
+          <section className="grid grid-cols-1 gap-3">
             <ActionButton icon={<Download />} label="DOWNLOAD IMAGE" color="bg-secondary" shadow="shadow-[8px_8px_0_0_#A90219]" onClick={handleDownload} />
             <ActionButton icon={<LinkIcon />} label="COPY LINK" color="border-4 border-primary text-primary" onClick={() => { navigator.clipboard.writeText(window.location.href); alert("Link copied!"); }} />
-            <ActionButton icon={<Instagram />} label="SHARE TO INSTAGRAM" color="bg-tertiary" shadow="shadow-[8px_8px_0_0_#2e0061]" />
           </section>
 
           <section className="bg-surface-high p-10 border-l-8 border-primary">
@@ -807,7 +776,7 @@ The allScores are independent probability scores (NOT summing to 100). The prima
           <div className="flex flex-col items-center justify-center gap-6 px-4">
             <div className="font-headline font-black italic text-primary text-4xl mb-2 uppercase">NAAZUK</div>
             <div className="font-label text-[10px] tracking-[0.2em] uppercase text-white/40 text-center max-w-lg">
-              © 2024 NAAZUK: THE DIGITAL AUTOPSY THEATER. NO EGOS WERE HARMED (THEY WERE DESTROYED).
+              © 2026 NAAZUK: THE DIGITAL AUTOPSY THEATER. NO EGOS WERE HARMED (THEY WERE DESTROYED).
             </div>
             <div className="flex gap-8">
               <button className="font-label text-[10px] tracking-[0.2em] uppercase text-white/40 hover:text-primary transition-all">Privacy</button>
